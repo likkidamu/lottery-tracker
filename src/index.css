@@ -1,0 +1,27 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 15px;
+  color: #1e293b;
+  background-color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+}
+
+body { min-height: 100vh; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input {
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+h2 { font-size: 1.25rem; font-weight: 600; color: #1e293b; }
+h3 { font-size: 1rem; font-weight: 600; color: #334155; }
