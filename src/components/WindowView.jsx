@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { parseBarcode, getGames, saveGame, saveWindow, generateId, calcWindowSales } from '../db'
+import { parseBarcode, getGames, saveGame, saveWindow, generateId, calcWindowSales, calcRemaining } from '../db'
 import GameModal from './GameModal'
 
 export default function WindowView({ activeWindow, reload, setView }) {
@@ -56,7 +56,9 @@ export default function WindowView({ activeWindow, reload, setView }) {
       return
     }
 
-    recordScan(parseInt(boxNumber), parsed.gameId, parsed.ticketNumber, raw, game)
+    // Use totalTickets from barcode if available, otherwise fall back to stored game value
+    const mergedGame = parsed.totalTickets ? { ...game, totalTickets: parsed.totalTickets } : game
+    recordScan(parseInt(boxNumber), parsed.gameId, parsed.ticketNumber, raw, mergedGame)
   }
 
   function recordScan(boxNum, gameId, ticketNumber, rawBarcode, game) {
@@ -77,10 +79,10 @@ export default function WindowView({ activeWindow, reload, setView }) {
     reload()
 
     const typeLabel = scanType === 'start' ? 'Start' : scanType === 'new_pack' ? 'New Pack' : 'End'
-    const remaining = game.totalTickets - ticketNumber
+    const remaining = calcRemaining(game.totalTickets, ticketNumber)
     flash(
       `Box #${boxNum} · ${game.name} · Ticket #${String(ticketNumber).padStart(3, '0')} recorded as ${typeLabel}` +
-      (scanType === 'end' ? ` · ${remaining} tickets remaining` : ''),
+      (scanType === 'end' && remaining !== null ? ` · ${remaining} tickets remaining` : ''),
       'success'
     )
     setBarcode('')
@@ -119,6 +121,7 @@ export default function WindowView({ activeWindow, reload, setView }) {
       {pendingGame && (
         <GameModal
           gameId={pendingGame.gameId}
+          totalTickets={pendingGame.totalTickets}
           onSave={handleNewGame}
           onCancel={() => { setPendingGame(null); setBarcode(''); scanRef.current?.focus() }}
         />

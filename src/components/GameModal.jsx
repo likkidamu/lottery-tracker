@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-export default function GameModal({ onSave, onCancel, gameId }) {
+export default function GameModal({ onSave, onCancel, gameId, totalTickets }) {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
-  const [total, setTotal] = useState('')
+  const [total, setTotal] = useState(totalTickets ? String(totalTickets) : '')
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -43,14 +43,14 @@ export default function GameModal({ onSave, onCancel, gameId }) {
             />
           </div>
           <div className="form-group">
-            <label>Total Tickets per Pack</label>
+            <label>Total Tickets per Pack <span className="muted">(check printed label e.g. "(004)" = 4)</span></label>
             <input
               className="input"
               type="number"
               min="1"
               value={total}
               onChange={e => setTotal(e.target.value)}
-              placeholder="e.g. 1000"
+              placeholder="e.g. 4"
             />
           </div>
           <div className="modal-actions">
